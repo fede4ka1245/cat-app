@@ -1,6 +1,7 @@
-import { Button, Grid, Snackbar, Alert } from '@mui/material';
+import { Button, Grid, Snackbar, Alert, Skeleton } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import classNames from 'classnames';
 import styles from './CatImgae.module.scss';
 
 function arrayBufferToBase64( buffer ) {
@@ -33,16 +34,23 @@ const copyImage = (pngImageBlob) => {
 
 const CatImage = () => {
     const ref = useRef();
+    const [isImageLoading, setIsImageLoading] = useState(false);
     
     useEffect(async () => {
         if (!ref.current) {
             return;
         }
 
-        let image = await axios.get('https://cataas.com/cat', {responseType: 'arraybuffer'});
-        let returnedB64 = arrayBufferToBase64(image.data);
+        setIsImageLoading(true);
 
-        ref.current.src = `data:image/png;base64,${returnedB64}`;
+        try {
+            let image = await axios.get('https://cataas.com/cat', {responseType: 'arraybuffer'});
+            let returnedB64 = arrayBufferToBase64(image.data);
+    
+            ref.current.src = `data:image/png;base64,${returnedB64}`;
+        } finally {
+            setIsImageLoading(false);
+        }
     }, []);
 
     const [isSneakbarOpen, setIsSneakbarOpen] = useState(false);
@@ -66,10 +74,16 @@ const CatImage = () => {
             return;
         }
 
-        let image = await axios.get('https://cataas.com/cat', {responseType: 'arraybuffer'});
-        let returnedB64 = arrayBufferToBase64(image.data);
+        setIsImageLoading(true);
 
-        ref.current.src = `data:image/png;base64,${returnedB64}`;
+        try {
+            let image = await axios.get('https://cataas.com/cat', {responseType: 'arraybuffer'});
+            let returnedB64 = arrayBufferToBase64(image.data);
+    
+            ref.current.src = `data:image/png;base64,${returnedB64}`;
+        } finally {
+            setIsImageLoading(false);
+        }
     }, []);
 
     return (
@@ -79,10 +93,23 @@ const CatImage = () => {
                     Image successfully copyed
                 </Alert>
             </Snackbar>
-            <img alt="cat" className={styles.image} ref={ref}/>
-            <Grid container direction={'column'}>
+            <Grid height={'600px'} maxHeight={'100wv'} maxWidth={'100%'} width={'600px'} display='flex' p={2} alignItems='center' justifyContent={'flex-start'} flexDirection={'column'}>
+                { isImageLoading && <>
+                    <Grid item pt={2} width='100%' height={'80px'}>
+                        <Skeleton variant='rectangle' width={'100%'} height={'100%'} />
+                    </Grid>
+                    <Grid item pt={1} width='100%' height={'80px'}>
+                        <Skeleton variant='rectangle' width={'100%'} height={'100%'} />
+                    </Grid>
+                    <Grid item width='100%' height={'80%'}>
+                        <Skeleton variant='rectangle' width={'100%'} height={'100%'} />
+                    </Grid> 
+                </>}
+                <img alt="cat" className={classNames(styles.image, {[styles.none]: isImageLoading})} ref={ref}/>
+            </Grid>
+            <Grid container direction={'row'} pt={5}>
                 <Grid item>
-                    <Button onClick={onCopyImageClick}>
+                    <Button disabled={isImageLoading} onClick={onCopyImageClick}>
                         Copy image
                     </Button>
                 </Grid>

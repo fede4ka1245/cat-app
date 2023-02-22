@@ -1,6 +1,10 @@
 .image {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    height: 100%;
     margin: 15px;
     object-fit: contain;
+}
+
+.none {
+    display: none;
 }
