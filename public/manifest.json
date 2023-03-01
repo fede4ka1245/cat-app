@@ -2,8 +2,8 @@
   "name": "Cat's App",
   "short_name": "Cat's App",
   "start_url": ".",
-  "display": "standalone",
-  "background_color": "#fff",
+  "display": "minimal-ui",
+  "background_color": "#000000",
   "description": "The app which shows cats!",
   "icons": [
     {
